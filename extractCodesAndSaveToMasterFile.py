@@ -1,4 +1,4 @@
-# written by David Falk, APEX Lab at UChicago employee
+# written by David Falk, employee at APEX Lab/Nusbaum Lab at UChicago
 # for Dani's senior Thesis as a member of the Levine Lab at UChicago
 # (2024)
 
@@ -28,12 +28,13 @@ QuasiRelationalMathCodes = ['QARM-Comparison', 'QARM-Relational Mapping', 'QARM-
 QuasiRelationalNonMathCodes = ['QARN-Comparison', 'QARN-Relational Mapping', 'QARN-Self Connection', 
                         'QARN-Inference', 'QARN-Definition']
 nonRelationalMathCodes = ['NM-Label', 'NM-BF', 'NM-Repeat', 'NM-Affirmation']
-nonRelationalNonMathCodes = ['NN-Label', 'NN-BF', 'NN-SE', 'NN-Affirmation', 'NN-Repeat', 'Other', 'Off task']
+nonRelationalNonMathCodes = ['NN-Label', 'NN-BF', 'NN-SE', 'NN-Affirmation', 'NN-Repeat']
+noDashCodes = ['other', 'offtask']
 
 # master list of all of the codes
 codes = relationalMathCodes + relationalNonMathCodes + \
         QuasiRelationalMathCodes + QuasiRelationalNonMathCodes + \
-        nonRelationalMathCodes + nonRelationalNonMathCodes
+        nonRelationalMathCodes + nonRelationalNonMathCodes + noDashCodes
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
@@ -136,7 +137,7 @@ def getResults(subjectFile, transcriptsFolderPath):
             label = line[labelColumnIndex] # extract the label
             label = label.lower() # make everything lowercase
             label = label.replace(' ', '') # remove all spaces from the label
-            if label.lower() == 'other' or label.lower() == 'offtask':
+            if label.lower() in noDashCodes:
                 pass
             else:
                 label = label.split('-') # split the label into two parts (before the dash vs after the dash)
@@ -145,7 +146,7 @@ def getResults(subjectFile, transcriptsFolderPath):
                 # do what we did to the label to the code
                 newCode = code.lower()
                 newCode = newCode.replace(' ', '')
-                if newCode == 'other' or newCode == 'offtask':
+                if newCode in noDashCodes:
                     if newCode == label:
                         results[i + 1] = str(int(results[i + 1]) + 1)
                         labelFound = True
