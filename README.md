@@ -20,9 +20,9 @@ How to download the code
 3) Click "Download ZIP" to download the code as a zip file
 4) Find the code you downloaded (it should be called something like "LevineLabCodingCode-master.zip")
 5) Open it and then open the "LevineLabCodingCode-master" folder
-6) Drag the "extractCodesandSaveToMasterFile.py" to your desktop
+6) Drag the "extractCodesAndSaveToMasterFile.py" to your desktop
 7) Create a folder on your desktop to store the code in. Call it whatever you'd like. Just make it memorable so you can find it again
-8) Move the "extractCodesandSaveToMasterFile.py" file from your desktop to the the folder you created in step 7
+8) Move the "extractCodesAndSaveToMasterFile.py" file from your desktop to the the folder you created in step 7
 ==================================================================================
 
 
