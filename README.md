@@ -1,6 +1,5 @@
 Contact Info: dtfalk@uchicago.edu, dtfbaseball@gmail.com and 1-413-884-2553 
 
-
 Hello y'all over at the Levine lab!
 
 This is a README for how to use the code in this github repository.
