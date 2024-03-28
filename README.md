@@ -80,7 +80,7 @@ What you might need/want to change
 ==================================================================================
 If you're feeling adventurous, then you can open the "extractCodesAndSaveToMasterFile.py" file and make some modifications to your liking. The first section of code contains some variables that you may want to change. The list of variables you can change are below:
 
-1) "transcriptsFolderName": This is the name of the folder where your transcripts are stored. If you want to call the folder something other than "transcriptsFolder", then change this variable to whatever you decide to name the folder in which you store the transcript CSVs.
+1) "CSVtranscriptsFolderName": This is the name of the folder where your transcripts are stored as CSVs. If you want to call the folder something other than "transcriptsFolder", then change this variable to whatever you decide to name the folder in which you store the transcript CSVs.
 2) "saveFolderName": Change this to whatever you want the name of the folder that contains the output files to be. If you change it to another name, then you will find the "masterFile.csv" and "errorFile.csv" stored within a folder with that name.
 3) "masterFileName" and "errorFileName": If you want your output files to have different names, then change these variables. 
 4) "relationalMathCodes", "relationalNonMathCodes", etc...: If you want to add or remove codes to your analysis, then add them to these lists according to the format you see in the code. Make sure to add a dash ("-") assuming it is a two part code (e.g. 'NM-Label"). If it is a code without a dash, then add it to the "noDashCodes" list without any capital letters or spaces.
