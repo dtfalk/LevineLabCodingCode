@@ -23,7 +23,7 @@ How to download the code
 6) Drag the "extractCodesAndSaveToMasterFile.py" to your desktop
 7) Create a folder on your desktop to store the code in. Call it whatever you'd like. Just make it memorable so you can find it again
 8) Move the "extractCodesAndSaveToMasterFile.py" file from your desktop to the the folder you created in step 7
-==================================================================================
+
 
 
 Where to put the transcripts
@@ -31,7 +31,7 @@ Where to put the transcripts
 1) Within the folder you just created on your desktop, create a new folder and call it "transcriptsFolder"
 2) Download all of your transcripts. Make sure that the name of the transcripts is just the subject number. For example, if the subject number is "999999", then the file itself should be called "999999.csv". In your file finder/explorer it may just be listed as "999999", that is not a problem. Just make sure that its name, other than the file extension at the end, is just the subject number.
 3) Move all of these transcripts into the "transcriptsFolder". When you click on the "transcriptsFolder" in your file finder/explorer you should see a list of files. Make sure you don't create a subfolder within "transcriptsFolder". "transcriptsFolder" should just contain the transcript CSV files.
-==================================================================================
+
 
 
 How to run the code
@@ -48,7 +48,7 @@ How to run the code
 10) Open the overall folder with the code + transcriptsFolder in your file finder/explorer. You should see a "saveFolder".
 11) This folder contains a file called "masterFile.csv" and "errorsFile.csv". The masterFile is the masterFile with the coded results. The errorsFile contains all of the codes that were not according to the coding scheme that you gave me (misspellings, etc...). The masterFile.csv should have the bulk of the coding done for y'all and the errorFile.csv is things that should be reviewed by a human. 
 12) upload these CSVs into google drive or whatever your preferred CSV viewer is
-==================================================================================
+
 
 
 *optional* How to convert excel files (.xlsx) to CSV files (.csv)
@@ -73,7 +73,7 @@ as a list of zeroes. All that should be in these files is one long column with t
 17) type/enter "python convertExcelToCSV.py" into the terminal and let the conversion code run. You should now see a "transcriptsFolder" and if you open it, then it will be populated with csv versions of your files.
 18) Now you can run "extractCodesAndSaveToMasterFile.py" according to the instructions in the previous section
 19) I seriously recommend you just download the files as CSVs to begin with and save yourself the trouble of this section. My instructions are not perfect and there's plenty of annoying computer things that can happen and make this part fail. But if you want to know more about coding in python, then knowing the basics of setting up and using an anaconda environment is invaluable.
-==================================================================================
+
 
 
 What you might need/want to change
@@ -84,11 +84,11 @@ If you're feeling adventurous, then you can open the "extractCodesAndSaveToMaste
 2) "saveFolderName": Change this to whatever you want the name of the folder that contains the output files to be. If you change it to another name, then you will find the "masterFile.csv" and "errorFile.csv" stored within a folder with that name.
 3) "masterFileName" and "errorFileName": If you want your output files to have different names, then change these variables. 
 4) "relationalMathCodes", "relationalNonMathCodes", etc...: If you want to add or remove codes to your analysis, then add them to these lists according to the format you see in the code. Make sure to add a dash ("-") assuming it is a two part code (e.g. 'NM-Label"). If it is a code without a dash, then add it to the "noDashCodes" list without any capital letters or spaces.
-==================================================================================
+
 
 
 How to have a good time while you are doing 1-4 and troubleshooting tips
 ==================================================================================
 Do something fun to relax and reach out to me at dtfalk@uchicago.edu, dtfbaseball@gmail.com or at 413-884-2553. Either one is fine for me, but if you choose to text/call me, then please identify yourself so I know that you are not spam.
-==================================================================================
+
 
