@@ -7,7 +7,7 @@
 # ------------------------------------------------------------------------------
 
 # name of the folder where the transcript csvs are stored (we load data from this folder)
-transcriptsFolderName = 'transcriptsFolder' 
+CSVtranscriptsFolderName = 'transcriptsFolder' 
 
 # name of the folder where we store the outputted master file and error file (we save data to this folder)
 saveFolderName = 'saveFolder'
@@ -75,7 +75,7 @@ def getPaths():
     # 2) add the name of either the load or save folder (either 'transcriptsFolderName' or 'saveFolderName')
     # 3) For the save files, add the filename (either 'masterFileName' or 'errorFileName')
     # The result is the full location of either where we are loading the data from or loading the data to
-    transcriptsFolderPath = os.path.join(curDir, transcriptsFolderName) 
+    transcriptsFolderPath = os.path.join(curDir, CSVtranscriptsFolderName) 
     saveFolderPath = os.path.join(curDir, saveFolderName)
     masterFileSavePath = os.path.join(saveFolderPath, masterFileName)
     errorFileSavePath = os.path.join(saveFolderPath, errorFileName)
@@ -127,42 +127,74 @@ def getResults(subjectFile, transcriptsFolderPath):
         lines = list(reader)
         labelColumnIndex = 0 # index for the column where the labels are
 
+        # iterates over every line of data in the transcript csv file
         for j, line in enumerate(lines):
-            labelFound = False # variable for keeping track of if the label matches any of our labels
 
-            # skip if it is a blank line
-            if len(line) == 0:
+            # variable for keeping track of if the label matches any of our labels.
+            # this resets for each new piece of data, because this represents if we found a match in the codes
+            # for a given line/label/piece of data in this transcript
+            labelFound = False 
+
+            # skip this label if it is a blank line,
+            # if it is the last line (the files sent to me had a list of 0's as the very last line),
+            # or if there is a header (the files sent to me had 3 lines of headers so I needed to skip those lines)
+            if len(line) == 0 or j < 3 or j == len(lines) - 1:
                 continue
 
-            label = line[labelColumnIndex] # extract the label
-            label = label.lower() # make everything lowercase
-            label = label.replace(' ', '') # remove all spaces from the label
-            if label.lower() in noDashCodes:
-                pass
-            else:
-                label = label.split('-') # split the label into two parts (before the dash vs after the dash)
-
-            for i, code in enumerate(codes):
-                # do what we did to the label to the code
-                newCode = code.lower()
-                newCode = newCode.replace(' ', '')
-                if newCode in noDashCodes:
-                    if newCode == label:
-                        results[i + 1] = str(int(results[i + 1]) + 1)
-                        labelFound = True
-                        break
-                else:
-                    newCode = newCode.split('-')
-                    if label[0] in newCode[0] and label[1] in newCode[1]:
-                        results[i + 1] = str(int(results[i + 1]) + 1)
-                        labelFound = True
-                        break
+            label = line[labelColumnIndex] # extract the label from the csv
+            newLabel = label.lower() # make everything jn the label lowercase
+            newLabel = newLabel.replace(' ', '') # remove all spaces from the label
             
+            # handles one word (no dash) codes
+            if newLabel in noDashCodes:
+
+                # iterate over all of the codes
+                for i, code in enumerate(codes):
+
+                    # if the label equals a code, then add one to the counter for that code
+                    if newLabel == code.lower():
+                        results[i + 1] = str(int(results[i + 1]) + 1)
+                        labelFound = True
+
+            # otherwise, it is a code with a dash in it, and this else statement handles that case.
+            # big picture: split the label (and the codes) into two parts: everything that comes before
+            # the dash ("-") and everything that comes after the dash. If a label (the data on one line of a transcript csv)
+            # and a code have the same values before and after the dash, then the label matches the code and we add one to the 
+            # counter for that code.       
+            else:
+                newLabel = newLabel.split('-') # split the label into two parts (before the dash vs after the dash)
+                
+                # iterate over all of the codes with dashes in them. Since this is the case where the label has no dash
+                # we can skip all of the codes that don't have dashes in them. This is what "if code in noDashCodes: continue" does
+                for i, code in enumerate(codes):
+
+                    # skips the codes without a dash in them
+                    if code in noDashCodes:
+                        continue
+
+                    # do what we did to the label to the code (make it lowercase, remove spaces, and split into two parts)
+                    newCode = code.lower()
+                    newCode = newCode.replace(' ', '')
+                    newCode = newCode.split('-')
+
+                    # if the first part of the label matches the first part of the code and
+                    # the second part of the label matches the second part of the code,
+                    # then we have a match! If so, then add one to the counter that keeps track
+                    # of how many times that code showed up in the transcript
+                    if newLabel[0] in newCode[0] and newLabel[1] in newCode[1]:
+                        results[i + 1] = str(int(results[i + 1]) + 1) # cast the counter to an integer, add one to it, then cast it back to a string
+                        labelFound = True # signifies that we found a match and we don't need to add this label to the error files
+                        break # since we found a match, we don't need to keep looking through codes to find a match. Stop the search here
+            
+
+            # if we don't find a match for the label after searching through all of the codes, then add this label to the error file
             if not labelFound:
                 seperator = '-'
-                errors.append([str(subjectID), seperator.join(label), str(j + 1)])
+                errors.append([str(subjectID), seperator.join([label]), str(j + 1)])
 
-        return results, errors
+        # return the labels we found a match for (results) and the labels we did not find a match for (errors)
+        # in a format that we can use to write them to a csv file. Happy to explain more about how this formatting works! just ask!
+        return results, errors 
 
 
     
@@ -180,14 +212,19 @@ if __name__ == '__main__':
     # creates and writes the headers to the master file and the error file
     writeHeaders(masterFileSavePath, errorFileSavePath)
     
-    errorsList = []
+    errorsList = [] # oython list for keeping track of the labels that didn't have a match
+
     # iterates over all of the subject files in the transcript folder
     for subjectFile in os.listdir(transcriptsFolderPath):
-        results, errors = getResults(subjectFile, transcriptsFolderPath) # retrieves the data in the subject's csv file
+        # For each transcript, retrieve the data in the subject's csv file 
+        # (the labels with matches [i.e. results] and the labels without matches [i.e. errors])
+        results, errors = getResults(subjectFile, transcriptsFolderPath)
+
+        # add the errors to the list of errors
         for error in errors:
             errorsList.append(error)
 
-        # writes the subject's data to the master file
+        # writes the results (the labels with matches) to the master file
         with open(masterFileSavePath, 'a', newline = '') as f:
             writer = csv.writer(f)
             writer.writerow(results)
@@ -195,7 +232,7 @@ if __name__ == '__main__':
     # writes any codes not in the codes list to the error file for human review
     with open(errorFileSavePath, 'a', newline = '') as f:
         writer = csv.writer(f)
-        for error in errors:
+        for error in errorsList:
             writer.writerow(error)
 
 
