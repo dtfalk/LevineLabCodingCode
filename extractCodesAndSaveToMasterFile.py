@@ -107,7 +107,7 @@ def getResults(subjectFile, transcriptsFolderPath):
             for codeIndex, code in enumerate(codes):
                 splitCode = code.lower().replace(' ', '').split('-')
                 if len(label) == len(splitCode) and label[0] == splitCode[0]:
-                    if label[0] == splitCode[0] and all([label[i] in splitCode[i] for i in range(1, len(label))]):
+                    if all([label[i] in splitCode[i] for i in range(1, len(label))]):
                         results[codeIndex + 1] = str(int(results[codeIndex + 1]) + 1)
                         labelFound = True  
 
