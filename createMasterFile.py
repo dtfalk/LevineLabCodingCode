@@ -97,7 +97,7 @@ def getResults(subjectFile, transcriptsFolderPath):
             # skip this label if it is a blank line,
             # if it is the last line (the files sent to me had a list of 0's as the very last line),
             # or if there is a header (the files sent to me had 3 lines of headers so I needed to skip those lines)
-            if len(line) == 0 or lineIndex < 3 or lineIndex == len(lines) - 1:
+            if len(line) == 0:# or lineIndex < 3 or lineIndex == len(lines) - 1:
                 continue
             
             # extract the label from the line, make lowercase, remove all spaces, and split by dashes
@@ -109,7 +109,8 @@ def getResults(subjectFile, transcriptsFolderPath):
                 if len(label) == len(splitCode) and label[0] == splitCode[0]:
                     if all([label[i] in splitCode[i] for i in range(1, len(label))]):
                         results[codeIndex + 1] = str(int(results[codeIndex + 1]) + 1)
-                        labelFound = True  
+                        labelFound = True 
+                        break 
 
             # adds the code to the list of errors if it doesn't match one of our labels
             if not labelFound:
@@ -119,7 +120,7 @@ def getResults(subjectFile, transcriptsFolderPath):
         # in a format that we can use to write them to a csv file. Happy to explain more about how this formatting works! just ask!
         return results.copy(), errors.copy()
 
-
+        
     
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -127,7 +128,7 @@ def getResults(subjectFile, transcriptsFolderPath):
 # this is the "launchpad" of the code
 # The order in which the code runs is determined by the order of the code below
 # Any functions above this are helper functions that get run in the code below
-if __name__ == '__main__':
+def main():
 
     # retrieves the load and save locations and creates the save folder
     transcriptsFolderPath, masterFileSavePath, errorFileSavePath = getPaths()
@@ -169,4 +170,5 @@ if __name__ == '__main__':
         for result in resultsList:
             writer.writerow(result)
 
-
+if __name__ == '__main__':
+    main()
