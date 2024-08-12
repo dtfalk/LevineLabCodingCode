@@ -97,7 +97,7 @@ def getResults(subjectFile, transcriptsFolderPath):
             # skip this label if it is a blank line,
             # if it is the last line (the files sent to me had a list of 0's as the very last line),
             # or if there is a header (the files sent to me had 3 lines of headers so I needed to skip those lines)
-            if len(line) == 0:# or lineIndex < 3 or lineIndex == len(lines) - 1:
+            if len(line) == 0: # or lineIndex < 3 or lineIndex == len(lines) - 1:
                 continue
             
             # extract the label from the line, make lowercase, remove all spaces, and split by dashes
