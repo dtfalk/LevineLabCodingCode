@@ -26,9 +26,9 @@ relationalMathCodes = ['RM-Comparison', 'RM-Relational Mapping', 'RM-Self Connec
          'RM-Proportion', 'RM-Definition', 'RM-Inference']
 relationalNonMathCodes = ['RN-Comparison', 'RN-Relational Mapping', 'RN-Self Connection', 
                         'RN-Inference', 'RN-Definition']
-QuasiRelationalMathCodes = ['QARM-Comparison', 'QARM-Relational Mapping', 'QARM-Self Connection', 'QARM-Calculation',
+quasiRelationalMathCodes = ['QARM-Comparison', 'QARM-Relational Mapping', 'QARM-Self Connection', 'QARM-Calculation',
          'QARM-Proportion', 'QARM-Definition', 'QARM-Inference']
-QuasiRelationalNonMathCodes = ['QARN-Comparison', 'QARN-Relational Mapping', 'QARN-Self Connection', 
+quasiRelationalNonMathCodes = ['QARN-Comparison', 'QARN-Relational Mapping', 'QARN-Self Connection', 
                         'QARN-Inference', 'QARN-Definition']
 nonRelationalMathCodes = ['NM-Label', 'NM-BF', 'NM-Repeat', 'NM-Affirmation']
 nonRelationalNonMathCodes = ['NN-Label', 'NN-BF', 'NN-SE', 'NN-Affirmation', 'NN-Repeat']
@@ -36,7 +36,7 @@ noDashCodes = ['other', 'offtask']
 
 # master list of all of the codes
 codes = relationalMathCodes + relationalNonMathCodes + \
-        QuasiRelationalMathCodes + QuasiRelationalNonMathCodes + \
+        quasiRelationalMathCodes + quasiRelationalNonMathCodes + \
         nonRelationalMathCodes + nonRelationalNonMathCodes + noDashCodes
 
 
@@ -80,7 +80,7 @@ def getResults(subjectFile, transcriptsFolderPath):
     subjectID = os.path.basename(subjectFile).replace('.csv', '')
 
     # initialize empty lists for data collection
-    results = [subjectID] + (['0'] * len(codes))
+    results = [subjectID] + ([0] * len(codes))
     errors = []
 
     # open the transcript to read the subject's data
@@ -94,10 +94,8 @@ def getResults(subjectFile, transcriptsFolderPath):
             # variable for keeping track of if the label matches any of our labels.
             labelFound = False 
 
-            # skip this label if it is a blank line,
-            # if it is the last line (the files sent to me had a list of 0's as the very last line),
-            # or if there is a header (the files sent to me had 3 lines of headers so I needed to skip those lines)
-            if len(line) == 0: # or lineIndex < 3 or lineIndex == len(lines) - 1:
+            # skip this label if it is a blank line
+            if not any(line):
                 continue
             
             # extract the label from the line, make lowercase, remove all spaces, and split by dashes
@@ -108,7 +106,7 @@ def getResults(subjectFile, transcriptsFolderPath):
                 splitCode = code.lower().replace(' ', '').split('-')
                 if len(label) == len(splitCode) and label[0] == splitCode[0]:
                     if all([label[i] in splitCode[i] for i in range(1, len(label))]):
-                        results[codeIndex + 1] = str(int(results[codeIndex + 1]) + 1)
+                        results[codeIndex + 1] = results[codeIndex + 1] + 1
                         labelFound = True 
                         break 
 
@@ -118,7 +116,8 @@ def getResults(subjectFile, transcriptsFolderPath):
 
         # return the labels we found a match for (results) and the labels we did not find a match for (errors)
         # in a format that we can use to write them to a csv file. Happy to explain more about how this formatting works! just ask!
-        return results.copy(), errors.copy()
+        results = [str(entry) for entry in results]
+        return results, errors
 
         
     
@@ -133,42 +132,31 @@ def main():
     # retrieves the load and save locations and creates the save folder
     transcriptsFolderPath, masterFileSavePath, errorFileSavePath = getPaths()
     
-    # lists to store results and errors
-    resultsList = []
-    errorsList = [] 
-    
     # iterates over all of the subject files in the transcript folder
-    for subjectFile in os.listdir(transcriptsFolderPath):
-        
-        # For each transcript, retrieve the data from the subject's csv file 
-        results, errors = getResults(subjectFile, transcriptsFolderPath)
+    with open(masterFileSavePath, mode = 'w', newline = '') as masterFile:
 
-        # add the results to the list of results
-        resultsList.append(results)
+        # write the header to the master file
+        masterFileWriter = csv.writer(masterFile)
+        masterFileWriter.writerow(['Subject ID'] + [str(code) for code in codes])
 
-        # add the errors to the list of errors
-        errorsList.extend(errors)
+        with open(errorFileSavePath, mode = 'w', newline = '') as errorFile:
 
-    
-    # creates the header (subject ID + code + line) and writes the data for the error file
-    errorFileHeader = ['Subject ID', 'code', 'line']
+            # write the header to the error file
+            errorFileWriter = csv.writer(errorFile)
+            errorFileWriter.writerow(['Subject ID', 'Code', 'Line Number'])
+            
 
-    with open(errorFileSavePath, mode = 'w', newline = '') as f:
-        writer = csv.writer(f)
-        writer.writerow(errorFileHeader)
-        for error in errorsList:
-            writer.writerow(error)
-    
-    # creates the header (subject ID + codes) and writes the data for the master file
-    masterFileHeader = ['Subject ID']
-    for code in codes:
-        masterFileHeader.append(str(code))
+            for subjectFile in os.listdir(transcriptsFolderPath):
+                
+                # For each transcript, retrieve the data from the subject's csv file 
+                results, errors = getResults(subjectFile, transcriptsFolderPath)
 
-    with open(masterFileSavePath, mode = 'w', newline = '') as f:
-        writer = csv.writer(f)
-        writer.writerow(masterFileHeader)
-        for result in resultsList:
-            writer.writerow(result)
+                # Write this subject's results to the master file
+                masterFileWriter.writerow(results)
+
+                # Write this subject's error codes to the error file
+                for error in errors:
+                    errorFileWriter.writerow(error)
 
 if __name__ == '__main__':
     main()
